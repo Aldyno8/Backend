@@ -1,0 +1,64 @@
+Class EmailGestionView gère l'affichage des listes de mail et son contenu
+    endpoints = http://127.0.0.1:8000/Email/
+    methode utiliser : get
+    données renvoyés = {
+    "id": identifiant du message,
+    "subject" : objet du mail,
+    "sender" : personne ayant envoyés le mail,
+    "snippets": petit texte de prévisualisation du mail,
+    "Date": date de réception du mail
+    }
+
+Class EmailContent gère l'affichage des contenu de chaque mail
+    endpoints = endpoints = http://127.0.0.1:8000/'EmailContent/<int:pk>'/
+    methode utiliisé: get
+    données nécessaire = {
+        "id_message": identifiant du message à regarder
+    }
+
+    renvoie tout les informations concernant le mail 
+
+Class SendEmailView gère l'envoi des mails 
+    endpoints = http://127.0.0.1:8000/SendMail/
+    methode utiliser: Post
+
+    donnée nécessaire : {
+        "destinataire" : bruel23@gmail.com,
+        "subject": Demande d'emploi,
+        "body": Corps du mail 
+    }
+
+    Si c'est une envoie Automatique: envoyer à la place de body la rédaction faites par IA
+
+Class DocumentView gère l'affichage des documents avec son lien de lecture online
+    endpoints = http://127.0.0.1:8000/Documents/
+
+    Methode utiliser : get
+
+    Données rendu :{
+        "name":"contrat.pdf",
+        "categories": "Contrat,
+        "genre": "pdf",
+        "Date": blablabla",
+        "link": "Lien de lecture"
+    }
+
+Class UserAuth gère l'authentificaton de l'user
+    endpoints = http://127.0.0.1:8000/Auth/
+    methode utiliisé: Post
+    donnée nécessaire = {
+        "token": token de l'utilisateur renvoyé après son authentificaton
+    }
+
+Class EventListView gère le renvoi des évenements récupérer dans le calendrier
+    endpoints = http://127.0.0.1:8000/EventList/
+    methode utiliisé: get
+
+    donnée renvoyé = {
+        "name": title,
+        "description":description,
+        "link": link,
+        "location":location,
+        "start":start,
+        "end": end
+    }
