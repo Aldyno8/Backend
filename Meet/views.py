@@ -38,18 +38,30 @@ class UserAuth(APIView):
             else:
                 return Response({"status": False})
                                
-# Class qui va gérer tout ce qui concerne les rendez vous 
+# Class qui va gérer tout ce qui concerne les rendez vous   
 class CreateMeetingView(APIView):
     def post(self, request, *args, **kwargs):
         
         # Traitement des donnés envoyée par l'user pour extraire les informations
         meeting_info = dataProcessing(request.data['requete'], nlp)
-        
+        event_duration = meeting_info['meeting_info']
+        if not meeting_info['meeting_start']:
+            start = randomDate("deadline", "event_priority","event_duration")
+            meeting_details = createMeeting(
+            meeting_info['meeting_title'], 
+            meeting_info['meeting_description'], 
+            start,
+            start + event_duration,
+            meeting_info['meeting_location']
+        )
+        else:
         # Création d'une réunion à partir des données qui ont été extrait de la requete User
-        meeting_details = createMeeting(
+            meeting_details = createMeeting(
             meeting_info['meeting_title'], 
             meeting_info['meeting_description'], 
             meeting_info['meeting_start'],
+            meeting_info['meeting_end'],
+            meeting_info['meeting_location']
         )
         
         # Vérifie si la réunion à bien été crée 
@@ -85,29 +97,15 @@ class EmailGestionView(APIView):
         message = MessageSerializes(list_message, many=True)
         return Response(message.data)
    
-# Class qui va gérer les détails de chaque email 
-class EmailContentView(APIView):
-    def post(self, request):
-        id_message = request.data('id_message') 
-        message = mailContent(id_message)
-        mail_content = MailContentSerializes(message)
-        return Response(mail_content)
-    
+  
 # Class qui va gérer l'envoi des mails
 class SendEmailView(APIView):
     def post(self, request):
-        identifiant =  request.data.get('id_message')
-        if identifiant:
-            message = mailContent('id_message')
-            destinataire = message['senders']
-            subject = message['subject']
-            body = request.data.get('body')
-            sendMail(destinataire, subject, body)
-        else:
-            destinataire = request.data.get('destinataire')
-            subject = request.data.get('subject')
-            body = request.data.get('body')
-            sendMail(destinataire, subject, body)
+        destinataire = request.data.get('destinataire')
+        subject = request.data.get('subject')
+        body = request.data.get('body')
+        sendMail(destinataire, subject, body)
+        return Response({})
         
 # Class qui va gérer l'affichage des documents
 class DocumentView(APIView):
